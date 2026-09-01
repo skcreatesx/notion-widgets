@@ -1,286 +1,268 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rough Notes Whiteboard</title>
     <style>
-        /* CSS Reset & Base Styles */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+      /* CSS Reset & Base Styles */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            background-color: transparent; /* Ideal for Notion embeds */
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 8px; /* Padding to show shadows inside the embed */
-        }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+          "Segoe UI Symbol";
+        background-color: transparent; /* Ideal for Notion embeds */
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 8px; /* Padding to show shadows inside the embed */
+      }
 
-        /* Widget Container */
-        .widget-container {
-            width: 100%;
-            height: 100%;
-            background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: box-shadow 0.2s ease, border-color 0.2s ease;
-            position: relative;
-        }
+      /* Widget Container */
+      .widget-container {
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.05),
+          0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition:
+          box-shadow 0.2s ease,
+          border-color 0.2s ease;
+        position: relative;
+      }
 
-        /* Focus state for the entire widget */
-        .widget-container:focus-within {
-            border-color: #4F46E5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
+      /* Focus state for the entire widget */
+      .widget-container:focus-within {
+        border-color: #4f46e5;
+        box-shadow:
+          0 0 0 3px rgba(79, 70, 229, 0.15),
+          0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
 
-        /* Toolbar */
+      /* Toolbar */
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 20px;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid #f3f4f6;
+        z-index: 10;
+      }
+
+      /* Clear Button */
+      .btn-clear {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: transparent;
+        border: 1px solid transparent;
+        color: #6b7280;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: inherit;
+      }
+
+      .btn-clear:hover {
+        background: #fef2f2;
+        color: #ef4444;
+        border-color: #fee2e2;
+      }
+
+      .btn-clear:active {
+        transform: scale(0.97);
+      }
+
+      .btn-clear:focus-visible {
+        outline: 2px solid #4f46e5;
+        outline-offset: 2px;
+      }
+
+      .emoji {
+        font-size: 16px;
+      }
+
+      /* Stats (Word/Char Count) */
+      .stats {
+        display: flex;
+        gap: 16px;
+        font-size: 13px;
+        color: #9ca3af;
+        font-weight: 500;
+      }
+
+      .stat-item span {
+        color: #4b5563;
+        font-weight: 600;
+        margin-right: 4px;
+        transition: color 0.2s ease;
+      }
+
+      /* Textarea Wrapper (for auto-expand scrolling) */
+      .textarea-wrapper {
+        flex: 1;
+        overflow-y: auto;
+        position: relative;
+        background: #ffffff;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Textarea */
+      textarea {
+        flex: 1;
+        width: 100%;
+        min-height: 100%;
+        border: none;
+        resize: none;
+        padding: 24px 20px;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #1f2937;
+        background: transparent;
+        outline: none;
+        font-family: inherit;
+        transition: background-color 0.2s ease;
+      }
+
+      textarea::placeholder {
+        color: #9ca3af;
+        font-weight: 400;
+      }
+
+      textarea::selection {
+        background-color: rgba(79, 70, 229, 0.2);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 10px;
+        border: 3px solid #ffffff; /* Creates padding around thumb */
+        transition: background 0.2s ease;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #d1d5db;
+      }
+
+      /* Mobile Adjustments */
+      @media (max-width: 480px) {
         .toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid #f3f4f6;
-            z-index: 10;
+          padding: 10px 16px;
         }
-
-        /* Clear Button */
-        .btn-clear {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: transparent;
-            border: 1px solid transparent;
-            color: #6b7280;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        .btn-clear:hover {
-            background: #fef2f2;
-            color: #ef4444;
-            border-color: #fee2e2;
-        }
-
-        .btn-clear:active {
-            transform: scale(0.97);
-        }
-
-        .btn-clear:focus-visible {
-            outline: 2px solid #4F46E5;
-            outline-offset: 2px;
-        }
-
-        .emoji {
-            font-size: 16px;
-        }
-
-        /* Stats (Word/Char Count) */
-        .stats {
-            display: flex;
-            gap: 16px;
-            font-size: 13px;
-            color: #9ca3af;
-            font-weight: 500;
-        }
-
-        .stat-item span {
-            color: #4b5563;
-            font-weight: 600;
-            margin-right: 4px;
-            transition: color 0.2s ease;
-        }
-
-        /* Textarea Wrapper (for auto-expand scrolling) */
-        .textarea-wrapper {
-            flex: 1;
-            overflow-y: auto;
-            position: relative;
-            background: #ffffff;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Textarea */
         textarea {
-            flex: 1;
-            width: 100%;
-            min-height: 100%;
-            border: none;
-            resize: none;
-            padding: 24px 20px;
-            font-size: 16px;
-            line-height: 1.6;
-            color: #1f2937;
-            background: transparent;
-            outline: none;
-            font-family: inherit;
-            transition: background-color 0.2s ease;
+          padding: 16px;
+          font-size: 15px;
         }
-
-        textarea::placeholder {
-            color: #9ca3af;
-            font-weight: 400;
+        .stats {
+          gap: 10px;
+          font-size: 12px;
         }
-
-        textarea::selection {
-            background-color: rgba(79, 70, 229, 0.2);
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #e5e7eb;
-            border-radius: 10px;
-            border: 3px solid #ffffff; /* Creates padding around thumb */
-            transition: background 0.2s ease;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #d1d5db;
-        }
-        
-        /* Mobile Adjustments */
-        @media (max-width: 480px) {
-            .toolbar {
-                padding: 10px 16px;
-            }
-            textarea {
-                padding: 16px;
-                font-size: 15px;
-            }
-            .stats {
-                gap: 10px;
-                font-size: 12px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="widget-container">
-        <!-- Toolbar -->
-        <div class="toolbar">
-            <button class="btn-clear" id="clearBtn" aria-label="Clear notes">
-                <span class="emoji">🧹</span> Clear
-            </button>
-            <div class="stats">
-                <div class="stat-item"><span id="wordCount">0</span> words</div>
-                <div class="stat-item"><span id="charCount">0</span> chars</div>
-            </div>
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <button class="btn-clear" id="clearBtn" aria-label="Clear notes">
+          <span class="emoji">🧹</span> Clear
+        </button>
+        <div class="stats">
+          <div class="stat-item"><span id="wordCount">0</span> words</div>
+          <div class="stat-item"><span id="charCount">0</span> chars</div>
         </div>
+      </div>
 
-        <!-- Note Taking Area -->
-        <div class="textarea-wrapper">
-            <textarea 
-                id="notesArea" 
-                placeholder="Type your rough notes here..." 
-                spellcheck="false"
-            ></textarea>
-        </div>
+      <!-- Note Taking Area -->
+      <div class="textarea-wrapper">
+        <textarea
+          id="notesArea"
+          placeholder="Type your rough notes here..."
+          spellcheck="false"
+        ></textarea>
+      </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const notesArea = document.getElementById('notesArea');
-            const clearBtn = document.getElementById('clearBtn');
-            const wordCountEl = document.getElementById('wordCount');
-            const charCountEl = document.getElementById('charCount');
+      document.addEventListener("DOMContentLoaded", function () {
+        const notesArea = document.getElementById("notesArea");
+        const clearBtn = document.getElementById("clearBtn");
+        const wordCountEl = document.getElementById("wordCount");
+        const charCountEl = document.getElementById("charCount");
 
-            // Focus textarea on load for immediate typing
-            notesArea.focus();
+        function updateStats() {
+          const text = notesArea.value;
 
-            // Function to update word and character counts
-            const updateStats = () => {
-                const text = notesArea.value;
-                
-                // Update Character Count
-                charCountEl.textContent = text.length;
+          charCountEl.textContent = text.length;
 
-                // Update Word Count
-                const words = text.trim().split(/\s+/).filter(word => word.length > 0);
-                wordCountEl.textContent = words.length;
-                
-                // Highlight numbers subtly when > 0
-                if(text.length > 0) {
-                    wordCountEl.style.color = '#4F46E5';
-                    charCountEl.style.color = '#4F46E5';
-                } else {
-                    wordCountEl.style.color = '#4b5563';
-                    charCountEl.style.color = '#4b5563';
-                }
-            };
+          const words = text.trim().split(/\s+/).filter(Boolean);
+          wordCountEl.textContent = text.trim() ? words.length : 0;
 
-            // Function to auto-expand textarea height
-            const autoExpand = () => {
-                // Reset height to auto to correctly calculate scrollHeight
-                notesArea.style.height = 'auto';
-                // Set the height to the scroll height (content height)
-                // We use Math.max to ensure it at least fills the wrapper via CSS min-height rules
-                notesArea.style.height = notesArea.scrollHeight + 'px';
-            };
+          if (text.length > 0) {
+            wordCountEl.style.color = "#4F46E5";
+            charCountEl.style.color = "#4F46E5";
+          } else {
+            wordCountEl.style.color = "#4b5563";
+            charCountEl.style.color = "#4b5563";
+          }
+        }
 
-            // Function to handle clearing notes
-           const clearNotes = () => {
-               if (notesArea.value.trim() === '') return;
-               notesArea.value = '';
-               updateStats();
-               autoExpand();
-               notesArea.focus();
-           };
+        function autoExpand() {
+          notesArea.style.height = "auto";
+          notesArea.style.height = notesArea.scrollHeight + "px";
+        }
 
-            // Event Listeners for typing
-            notesArea.addEventListener('input', () => {
-                updateStats();
-                autoExpand();
-            });
+        function clearNotes() {
+          notesArea.value = "";
+          updateStats();
+          autoExpand();
+          notesArea.focus();
+        }
 
-            // Event Listener for Clear Button
-            clearBtn.addEventListener('click', clearNotes);
-
-            // Keyboard Shortcut: Ctrl+L or Cmd+L to clear
-            document.addEventListener('keydown', (e) => {
-                const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-                const modifierKey = isMac ? e.metaKey : e.ctrlKey;
-
-                if (modifierKey && e.key.toLowerCase() === 'l') {
-                    e.preventDefault(); // Prevent default browser behavior (like selecting URL bar)
-                    clearNotes();
-                }
-            });
-            
-            // Initial call to set heights and stats correctly
-            updateStats();
-            autoExpand();
-            
-            // Handle window resize to adjust textarea height properly
-            window.addEventListener('resize', autoExpand);
+        notesArea.addEventListener("input", function () {
+          updateStats();
+          autoExpand();
         });
+
+        clearBtn.addEventListener("click", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          clearNotes();
+        });
+
+        updateStats();
+        autoExpand();
+      });
     </script>
-</body>
+  </body>
 </html>
