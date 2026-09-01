@@ -246,16 +246,13 @@
             };
 
             // Function to handle clearing notes
-            const clearNotes = () => {
-                if (notesArea.value.trim() === '') return; // Don't ask if already empty
-                
-                if (confirm('Are you sure you want to clear all your notes?')) {
-                    notesArea.value = '';
-                    updateStats();
-                    autoExpand();
-                    notesArea.focus();
-                }
-            };
+           const clearNotes = () => {
+               if (notesArea.value.trim() === '') return;
+               notesArea.value = '';
+               updateStats();
+               autoExpand();
+               notesArea.focus();
+           };
 
             // Event Listeners for typing
             notesArea.addEventListener('input', () => {
